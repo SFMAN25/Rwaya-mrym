@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>رواية: ورقة طلاق.. وشهادة ميلاد | بقلم مريم</title>
+    <!-- تحميل Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- تحميل خطوط عربية أدبية وعصرية: Amiri و Cairo -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --gold-primary: #d4af37;
+            --gold-light: #f3e5ab;
+            --obsidian: #0b0a0f;
+            --paper-bg: #fcf9f2;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: var(--obsidian);
+            color: #f5f5f5;
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+            transition: background 1.5s ease;
+        }
+
+        .font-literary {
+            font-family: 'Amiri', serif;
+        }
+
+        #ambient-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .scene-3d {
+            perspective: 2500px;
+            transform-style: preserve-3d;
+        }
+
+        .book-container {
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        .book-cover {
+            background: linear-gradient(135deg, #151118 0%, #2b0f16 50%, #0d0a0f 100%);
+            border: 2px solid rgba(212, 175, 55, 0.55);
+            box-shadow: 
+                -25px 30px 60px rgba(0, 0, 0, 0.9),
+                inset 0 0 50px rgba(212, 175, 55, 0.18),
+                10px 0 0 #050407,
+                16px 4px 0 #d4af37,
+                22px 8px 0 #120e14;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cover-ornament {
+            border: 1px solid rgba(212, 175, 55, 0.45);
+            box-shadow: inset 0 0 25px rgba(212, 175, 55, 0.12);
+        }
+
+        .gold-text-gradient {
+            background: linear-gradient(to bottom, #fff6d1 0%, #d4af37 50%, #947113 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .cover-sheen {
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at center, rgba(255, 235, 170, 0.15) 0%, transparent 65%);
+            pointer-events: none;
+            transition: transform 0.2s ease-out;
+        }
+
+        .open-book-spread {
+            background: var(--paper-bg);
+            color: #231f20;
+            box-shadow: 
+                0 30px 70px rgba(0, 0, 0, 0.8),
+                inset 0 0 50px rgba(184, 162, 118, 0.4);
+            border: 1px solid #d4c4a1;
+            position: relative;
+            transition: all 0.6s ease;
+        }
+
+        @media (min-width: 1024px) {
+            .book-spine-shadow {
+                background: linear-gradient(
+                    90deg,
+                    rgba(0,0,0,0) 0%,
+                    rgba(0,0,0,0.04) 46%,
+                    rgba(0,0,0,0.18) 50%,
+                    rgba(0,0,0,0.05) 54%,
+                    rgba(0,0,0,0) 100%
+                );
+            }
+        }
+
+        .page-flip-enter {
+            animation: pageTurnIn 0.8s cubic-bezier(0.2, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes pageTurnIn {
+            0% {
+                opacity: 0;
+                transform: rotateY(-15deg) scale(0.97);
+            }
+            100% {
+                opacity: 1;
+                transform: rotateY(0deg) scale(1);
+            }
+        }
+
+        .btn-glow {
+            box-shadow: 0 0 25px rgba(212, 175, 55, 0.45);
+            transition: all 0.3s ease;
+        }
+        .btn-glow:hover {
+            box-shadow: 0 0 38px rgba(212, 175, 55, 0.85);
+            transform: translateY(-2px);
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0b0a0f;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #5c4918;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #d4af37;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-amber-500 selection:text-black">
+
+    <!-- خلفية جزيئات ضوئية متحركة -->
+    <canvas id="ambient-canvas"></canvas>
+
+    <!-- الشريط العلوي -->
+    <header class="relative z-20 w-full py-4 px-4 sm:px-8 flex flex-wrap items-center justify-between border-b border-amber-500/20 bg-black/50 backdrop-blur-md">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-amber-700 flex items-center justify-center text-black font-bold shadow-lg">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                </svg>
+            </div>
+            <div>
+                <h1 class="text-base sm:text-lg font-bold text-amber-300 leading-tight">ورقة طلاق.. وشهادة ميلاد</h1>
+                <p class="text-xs text-gray-400">تأليف الكاتبة: <span class="text-amber-200 font-semibold">مريم</span></p>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-3 mt-2 sm:mt-0">
+            <!-- زر تشغيل الموسيقى/الأجواء التعبيرية -->
+            <button id="audio-toggle" onclick="toggleAtmosphereAudio()" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 transition flex items-center gap-2">
+                <svg id="audio-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path>
+                </svg>
+                <span id="audio-label">تفعيل الأجواء</span>
+            </button>
+
+            <button id="toggle-book-btn" onclick="toggleBookState()" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/40 transition flex items-center gap-2">
+                <span id="toggle-btn-text">افتح الرواية</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <!-- المحتوى الرئيسي -->
+    <main class="relative z-10 flex-grow flex flex-col items-center justify-center px-3 sm:px-6 py-8 sm:py-12 scene-3d">
+        
+        <!-- 1. غلاف الرواية ثلاثي الأبعاد -->
+        <div id="cover-view" class="w-full max-w-md mx-auto flex flex-col items-center transition-all duration-700">
+            <div id="interactive-book" onclick="openBook()" class="book-container cursor-pointer w-72 sm:w-80 md:w-96 aspect-[2/3] rounded-l-2xl rounded-r-md book-cover p-6 sm:p-8 flex flex-col justify-between select-none group">
+                <div id="cover-sheen" class="cover-sheen"></div>
+                
+                <div class="cover-ornament w-full h-full rounded-xl p-5 flex flex-col justify-between items-center text-center relative z-10">
+                    <div class="w-full">
+                        <span class="inline-block px-3.5 py-1 rounded-full text-[11px] tracking-wider bg-amber-500/10 text-amber-300 border border-amber-500/30 mb-2">
+                            رواية واقعية مؤثرة
+                        </span>
+                        <div class="w-16 h-[1px] bg-gradient-to-r from-transparent via-amber-400 to-transparent mx-auto"></div>
+                    </div>
+
+                    <div class="my-2 relative w-36 h-36 sm:w-40 sm:h-40 flex items-center justify-center">
+                        <div class="absolute inset-0 rounded-full bg-amber-500/15 blur-xl group-hover:bg-amber-400/30 transition duration-500"></div>
+                        <svg viewBox="0 0 200 200" class="w-full h-full drop-shadow-[0_12px_20px_rgba(0,0,0,0.85)] transform group-hover:scale-105 transition duration-500">
+                            <defs>
+                                <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#fff6d1"/>
+                                    <stop offset="50%" stop-color="#d4af37"/>
+                                    <stop offset="100%" stop-color="#8a6212"/>
+                                </linearGradient>
+                                <linearGradient id="wingGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+                                    <stop offset="0%" stop-color="#d4af37" stop-opacity="0.25"/>
+                                    <stop offset="100%" stop-color="#fff6d1" stop-opacity="0.95"/>
+                                </linearGradient>
+                            </defs>
+                            <path d="M 100 25 A 75 75 0 1 0 165 138" fill="none" stroke="url(#goldGrad)" stroke-width="3" stroke-linecap="round"/>
+                            <path d="M 165 138 A 75 75 0 0 0 100 25" fill="none" stroke="#d4af37" stroke-width="1.5" stroke-dasharray="4 6" opacity="0.65"/>
+                            <path d="M95 115 Q110 95 130 100 Q115 108 112 120 Q105 112 95 115 Z" fill="url(#wingGrad)"/>
+                            <path d="M122 82 Q138 62 162 65 Q145 75 142 88 Q133 80 122 82 Z" fill="url(#wingGrad)"/>
+                            <path d="M148 52 Q160 36 178 38 Q166 46 164 56 Q156 50 148 52 Z" fill="url(#wingGrad)"/>
+                            <circle cx="82" cy="82" r="10" fill="url(#goldGrad)"/>
+                            <path d="M66 145 C68 115, 72 98, 82 98 C92 98, 96 115, 98 145 Z" fill="url(#goldGrad)"/>
+                        </svg>
+                    </div>
+
+                    <div class="space-y-2">
+                        <h2 class="font-literary text-3xl sm:text-4xl font-bold gold-text-gradient leading-snug">
+                            ورقة طلاق..<br>وشهادة ميلاد
+                        </h2>
+                        <p class="text-xs sm:text-sm text-gray-300/90 font-light px-2 leading-relaxed">
+                            حين يراكِ المجتمع «ناقصة».. فتكتشفين أنكِ اكتملتِ للتو!
+                        </p>
+                    </div>
+
+                    <div class="w-full pt-3 border-t border-amber-500/25">
+                        <p class="text-xs text-amber-200/70">تأليف الكاتبة</p>
+                        <p class="font-literary text-xl sm:text-2xl font-bold text-amber-300 tracking-wide">مـريـم</p>
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="openBook()" class="mt-8 px-8 py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 text-gray-950 font-extrabold text-base sm:text-lg btn-glow flex items-center gap-3 cursor-pointer">
+                <span>افتح الرواية وابدأ القراءة</span>
+                <svg class="w-5 h-5 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                </svg>
+            </button>
+            <p class="mt-3 text-xs text-gray-400">اضغط على الكتاب أو الزر لبدء الرحلة العميقة</p>
+        </div>
+
+        <!-- 2. واجهة الكتاب المفتوح والفصول -->
+        <div id="open-book-view" class="hidden w-full max-w-6xl mx-auto">
+            
+            <div class="flex flex-wrap items-center justify-center gap-2 mb-6">
+                <button onclick="goToChapter(0)" id="tab-0" class="chapter-tab px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition border">
+                    ١. قفص من حديد
+                </button>
+                <button onclick="goToChapter(1)" id="tab-1" class="chapter-tab px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition border">
+                    ٢. لقب "الناقصة"
+                </button>
+                <button onclick="goToChapter(2)" id="tab-2" class="chapter-tab px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition border">
+                    ٣. نقطة التحول
+                </button>
+                <button onclick="goToChapter(3)" id="tab-3" class="chapter-tab px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition border">
+                    ٤. شروق جديد
+                </button>
+            </div>
+
+            <div id="book-spread" class="open-book-spread rounded-2xl sm:rounded-3xl overflow-hidden grid grid-cols-1 lg:grid-cols-2 min-h-[560px] relative">
+                <div class="book-spine-shadow hidden lg:block absolute inset-0 pointer-events-none z-20"></div>
+
+                <!-- الصفحة اليمنى: المشهد التفاعلي ثلاثي الأبعاد -->
+                <div id="visual-page" class="relative p-5 sm:p-8 flex flex-col justify-between items-center bg-gradient-to-b from-stone-900 to-stone-950 text-white border-b lg:border-b-0 lg:border-l border-amber-900/20">
+                    <div class="w-full flex items-center justify-between text-xs text-amber-300/80 z-10">
+                        <span id="scene-badge" class="px-3 py-1 rounded-full bg-white/10 backdrop-blur-sm border border-white/15">المشهد الأول</span>
+                        <span>تفاعل مع المؤثر البصري</span>
+                    </div>
+
+                    <div class="w-full h-64 sm:h-80 my-4 relative rounded-2xl overflow-hidden shadow-2xl border border-white/10" id="scene-canvas-wrapper">
+                        <canvas id="story-scene-canvas" class="w-full h-full block"></canvas>
+                    </div>
+
+                    <div class="w-full text-center z-10 bg-black/40 backdrop-blur-md p-3.5 rounded-xl border border-amber-500/20">
+                        <p id="scene-quote" class="font-literary text-base sm:text-lg text-amber-200 italic">
+                            "كنت أعيش في بيتٍ جدرانه من قسوة، ورياحه تخنق الأنفاس."
+                        </p>
+                    </div>
+                </div>
+
+                <!-- الصفحة اليسرى: نص السرد الروائي -->
+                <div id="text-page" class="p-6 sm:p-10 flex flex-col justify-between relative bg-[#fcf9f2]">
+                    <div>
+                        <div class="flex items-center justify-between text-xs text-amber-900/60 pb-3 mb-5 border-b border-amber-900/15">
+                            <span>ورقة طلاق.. وشهادة ميلاد</span>
+                            <span>بقلم: مريم</span>
+                        </div>
+
+                        <div class="mb-4">
+                            <span id="chapter-number" class="text-xs font-bold uppercase tracking-wider text-amber-700">الفصل الأول</span>
+                            <h3 id="chapter-title" class="font-literary text-2xl sm:text-3xl font-bold text-stone-900 mt-1">
+                                قفص من حديد
+                            </h3>
+                        </div>
+
+                        <div id="chapter-body" class="font-literary text-lg sm:text-xl text-stone-800 leading-loose space-y-4 text-justify">
+                            <!-- المحتوى يُحدث ديناميكياً -->
+                        </div>
+                    </div>
+
+                    <div class="mt-8 pt-4 border-t border-amber-900/15 flex items-center justify-between gap-3">
+                        <button onclick="prevChapter()" id="prev-btn" class="px-4 py-2.5 rounded-xl text-sm font-bold bg-stone-200 hover:bg-stone-300 text-stone-800 disabled:opacity-40 disabled:cursor-not-allowed transition flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                            </svg>
+                            <span>السابق</span>
+                        </button>
+
+                        <span id="page-indicator" class="font-literary text-sm font-bold text-amber-900/70">صفحة ١ من ٤</span>
+
+                        <button onclick="nextChapter()" id="next-btn" class="px-5 py-2.5 rounded-xl text-sm font-bold bg-amber-600 hover:bg-amber-700 text-white shadow-md transition flex items-center gap-1.5">
+                            <span id="next-btn-label">الصفحة التالية</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <!-- الفوتر وتفاصيل منشئ الصفحة والإنستغرام -->
+    <footer class="relative z-20 w-full bg-black/80 backdrop-blur-lg border-t border-amber-500/20 py-8 px-4 sm:px-8 mt-8">
+        <div class="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+            
+            <div class="text-center md:text-right space-y-1.5 max-w-md">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-bold">
+                    <span>✍️ تأليف الكاتبة: مريم</span>
+                </div>
+                <p class="text-sm text-gray-300 leading-relaxed">
+                    الطلاق ليس عيباً ولا نقصاً في المرأة؛ بل هو شجاعة اختيار الحياة وكرامة النفس. أنتِ كاملة بذاتكِ دائماً.
+                </p>
+            </div>
+
+            <div class="w-full md:w-auto bg-gradient-to-r from-stone-900 via-neutral-900 to-stone-900 border border-amber-500/30 rounded-2xl p-4 sm:p-5 shadow-xl flex flex-col sm:flex-row items-center gap-4">
+                <div class="text-center sm:text-right">
+                    <p class="text-xs text-gray-400">تصميم وتطوير الصفحة التفاعلية</p>
+                    <p class="text-base sm:text-lg font-extrabold text-amber-300">عبدالرحمن فوزي</p>
+                    <p class="text-[11px] text-gray-400 mt-0.5">لطلب إنشاء صفحة خاصة لروايتك أو مشروعك</p>
+                </div>
+
+                <a href="https://www.instagram.com/abdul_rahman_fawzi?obrf=NTE4emR2Zzd0NHBq" target="_blank" rel="noopener noreferrer" 
+                   class="w-full sm:w-auto px-5 py-3 rounded-xl bg-gradient-to-tr from-amber-500 via-pink-600 to-purple-700 hover:opacity-95 text-white font-bold text-xs sm:text-sm shadow-lg transition transform hover:-translate-y-0.5 flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                    </svg>
+                    <span>تواصل عبر إنستغرام</span>
+                </a>
+            </div>
+
+        </div>
+    </footer>
+
+    <script>
+        // بيانات الفصول الأربعة للرواية
+        const chapters = [
+            {
+                number: "الفصل الأول",
+                badge: "المشهد ١: قفص من حديد والسواد",
+                title: "قفص من حديد",
+                quote: "«كنت أعيش في بيتٍ جدرانه من قسوة، ورياحه تخنق الأنفاس.. السواد يلف كل تفاصيل أيامي.»",
+                bgBody: "#0b0a0f",
+                sceneBg: "from-zinc-950 via-neutral-900 to-stone-950",
+                paragraphs: [
+                    "سنواتٌ طويلة عاشتها مريم خلف جدرانٍ باردة، مع زوجٍ لم يرَ فيها سوى ظلٍّ صامت يتحمل القسوة والإهمال بلا شكوى.",
+                    "كان السواد يبتلع أحلامها يوماً بعد يوم؛ كل كلمةٍ جارحة كانت تطفئ لمعةً في عينيها، وكل ليلةٍ قضتها في البكاء الصامت جعلتها تتساءل: متى ينتهي هذا الكابوس؟"
+                ]
+            },
+            {
+                number: "الفصل الثاني",
+                badge: "المشهد ٢: نظرة المجتمع ووصمة الناقصة",
+                title: "لقب 'الناقصة'",
+                quote: "«كيف يجرؤ المجتمع على وزن القلوب بورقة طلاق، ويسمي الحرة 'ناقصة' لينتصر للظالم؟»",
+                bgBody: "#150e14",
+                sceneBg: "from-rose-950 via-stone-900 to-neutral-950",
+                paragraphs: [
+                    "حين قررت الخروج من الجحيم والطلاق، اصطدمت بصاعقة المجتمع ونظراته الظالمة؛ حيث تصبح المرأة المطلقة في نظرهم 'ناقصة' وكأنها ارتكبت جُرماً لا يُغفر.",
+                    "حاولت العادات البالية أن تحاصرها بالهمسات والاتهامات، مطالبة إياها بالصمت والخضوع لئلا تفقد لقب متزوجة، لكن كرامتها كانت أغلى من كل الألقاب."
+                ]
+            },
+            {
+                number: "الفصل الثالث",
+                badge: "المשهد ٣: نقطة التحول والوعي",
+                title: "نقطة التحول والوعي",
+                quote: "«في لحظة المواجهة أدركتُ أن قيمتي مستمدة من ذاتي، لا من رجلٍ كسر جناحي.»",
+                bgBody: "#17121c",
+                sceneBg: "from-slate-900 via-indigo-950 to-amber-950",
+                paragraphs: [
+                    "نهضت مريم من رماد التجربة لتكتشف قوتها الداخلية. لم تعد تلتفت للوراء ولا لألسنة الناس التي لا تطعم ولا تغني من جوع.",
+                    "أدركت أن الطلاق لم يكن سوى طوق نجاة حرر روحها من سجنٍ اختارته خطأً في الماضي، وبدأت ترسم طريقاً جديداً أساسه العلم والعمل والاعتماد على النفس."
+                ]
+            },
+            {
+                number: "الفصل الرابع",
+                badge: "المشهد ٤: شروق جديد وشهادة ميلاد",
+                title: "شروق جديد وشهادة ميلاد",
+                quote: "«هذه ليست ورقة طلاق فحسب.. هذه شهادة ميلادي الحقيقية نحو النور والحرية.»",
+                bgBody: "#1c170f",
+                sceneBg: "from-amber-950 via-yellow-900/70 to-stone-900",
+                paragraphs: [
+                    "أشسقت شمس جديدة في حياة مريم، وأثبتت لكل من حولها أن المرأة القوية تزهر بعد العاصفة وتصنع مجدها بيدها.",
+                    "تلاشت وصمة المجتمع أمام نجاحها وإشراقتها، وباتت قصة ملهمة لكل امرأة تبحث عن حريتها وكرامتها. إنها تولد من جديد كاملة، عزيزة، لا يكسرها شيء."
+                ]
+            }
+        ];
+
+        let isBookOpen = false;
+        let currentChapter = 0;
+        let pointerX = 0.5;
+        let pointerY = 0.5;
+        let isAudioPlaying = false;
+        let audioCtx = null;
+        let ambientInterval = null;
+
+        const coverView = document.getElementById('cover-view');
+        const openBookView = document.getElementById('open-book-view');
+        const toggleBtnText = document.getElementById('toggle-btn-text');
+        const interactiveBook = document.getElementById('interactive-book');
+        const coverSheen = document.getElementById('cover-sheen');
+
+        // تفاعل إمالة الغلاف ثلاثي الأبعاد
+        interactiveBook.addEventListener('mousemove', (e) => {
+            const rect = interactiveBook.getBoundingClientRect();
+            const x = (e.clientX - rect.left) / rect.width - 0.5;
+            const y = (e.clientY - rect.top) / rect.height - 0.5;
+            interactiveBook.style.transform = `rotateY(${x * 25}deg) rotateX(${-y * 25}deg) scale(1.02)`;
+            coverSheen.style.transform = `translate(${x * 40}px, ${y * 40}px)`;
+        });
+
+        interactiveBook.addEventListener('mouseleave', () => {
+            interactiveBook.style.transform = `rotateY(0deg) rotateX(0deg) scale(1)`;
+            coverSheen.style.transform = `translate(0px, 0px)`;
+        });
+
+        function openBook() {
+            isBookOpen = true;
+            coverView.style.opacity = '0';
+            coverView.style.transform = 'scale(0.9) rotateY(25deg)';
+            
+            setTimeout(() => {
+                coverView.classList.add('hidden');
+                openBookView.classList.remove('hidden');
+                openBookView.classList.add('page-flip-enter');
+                toggleBtnText.textContent = 'العودة للغلاف';
+                renderChapter(currentChapter);
+                resizeSceneCanvas();
+            }, 350);
+        }
+
+        function closeBook() {
+            isBookOpen = false;
+            openBookView.classList.add('hidden');
+            coverView.classList.remove('hidden');
+            setTimeout(() => {
+                coverView.style.opacity = '1';
+                coverView.style.transform = 'scale(1) rotateY(0deg)';
+                document.body.style.backgroundColor = '#0b0a0f';
+            }, 50);
+            toggleBtnText.textContent = 'افتح الرواية';
+        }
+
+        function toggleBookState() {
+            if (isBookOpen) {
+                closeBook();
+            } else {
+                openBook();
+            }
+        }
+
+        function renderChapter(index) {
+            const chapter = chapters[index];
+            const spread = document.getElementById('book-spread');
+            
+            spread.classList.remove('page-flip-enter');
+            void spread.offsetWidth;
+            spread.classList.add('page-flip-enter');
+
+            document.getElementById('scene-badge').textContent = chapter.badge;
+            document.getElementById('scene-quote').textContent = chapter.quote;
+            document.getElementById('chapter-number').textContent = chapter.number;
+            document.getElementById('chapter-title').textContent = chapter.title;
+            document.getElementById('page-indicator').textContent = `صفحة ${index + 1} من ${chapters.length}`;
+
+            const bodyContainer = document.getElementById('chapter-body');
+            bodyContainer.innerHTML = chapter.paragraphs.map(p => `<p>${p}</p>`).join('');
+
+            document.body.style.backgroundColor = chapter.bgBody;
+            const visualPage = document.getElementById('visual-page');
+            visualPage.className = `relative p-5 sm:p-8 flex flex-col justify-between items-center bg-gradient-to-b ${chapter.sceneBg} text-white border-b lg:border-b-0 lg:border-l border-amber-900/20 transition-colors duration-700`;
+
+            for (let i = 0; i < chapters.length; i++) {
+                const tab = document.getElementById(`tab-${i}`);
+                if (i === index) {
+                    tab.className = 'chapter-tab px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition border bg-amber-500 text-black border-amber-400 shadow-lg scale-105';
+                } else {
+                    tab.className = 'chapter-tab px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition border bg-white/5 text-amber-200/80 border-amber-500/25 hover:bg-white/15';
+                }
+            }
+
+            document.getElementById('prev-btn').disabled = (index === 0);
+            const nextBtnLabel = document.getElementById('next-btn-label');
+            if (index === chapters.length - 1) {
+                nextBtnLabel.textContent = 'العودة للغلاف';
+            } else {
+                nextBtnLabel.textContent = 'الصفحة التالية';
+            }
+        }
+
+        function goToChapter(index) {
+            currentChapter = index;
+            renderChapter(currentChapter);
+        }
+
+        function nextChapter() {
+            if (currentChapter < chapters.length - 1) {
+                currentChapter++;
+                renderChapter(currentChapter);
+            } else {
+                closeBook();
+            }
+        }
+
+        function prevChapter() {
+            if (currentChapter > 0) {
+                currentChapter--;
+                renderChapter(currentChapter);
+            }
+        }
+
+        // محرك الأجواء الصوتية باستخدام Web Audio API (أصوات هادئة وتأملية)
+        function toggleAtmosphereAudio() {
+            const label = document.getElementById('audio-label');
+            if (!isAudioPlaying) {
+                try {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                    isAudioPlaying = true;
+                    label.textContent = 'إيقاف الأجواء';
+                    
+                    // توليد نغمات موسيقية هادئة دورية
+                    ambientInterval = setInterval(() => {
+                        if (!isAudioPlaying || !audioCtx) return;
+                        const osc = audioCtx.createOscillator();
+                        const gain = audioCtx.createGain();
+                        
+                        const notes = [220, 277.18, 329.63, 440, 554.37]; // سلم خماسي هادئ
+                        osc.frequency.value = notes[Math.floor(Math.random() * notes.length)];
+                        osc.type = 'sine';
+                        
+                        gain.gain.setValueAtTime(0.015, audioCtx.currentTime);
+                        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 3.5);
+                        
+                        osc.connect(gain);
+                        gain.connect(audioCtx.destination);
+                        
+                        osc.start();
+                        osc.stop(audioCtx.currentTime + 3.5);
+                    }, 4000);
+                } catch(e) {
+                    console.log(e);
+                }
+            } else {
+                isAudioPlaying = false;
+                label.textContent = 'تفعيل الأجواء';
+                if (ambientInterval) clearInterval(ambientInterval);
+                if (audioCtx) audioCtx.close();
+            }
+        }
+
+        // محرك الرسم ثلاثي الأبعاد والتفاعلي للمشاهد
+        const sceneCanvas = document.getElementById('story-scene-canvas');
+        const sCtx = sceneCanvas.getContext('2d');
+        const sceneWrapper = document.getElementById('scene-canvas-wrapper');
+
+        function resizeSceneCanvas() {
+            if (!sceneWrapper) return;
+            const rect = sceneWrapper.getBoundingClientRect();
+            if (rect.width > 0 && rect.height > 0) {
+                sceneCanvas.width = rect.width * window.devicePixelRatio;
+                sceneCanvas.height = rect.height * window.devicePixelRatio;
+                sCtx.scale(window.devicePixelRatio, window.devicePixelRatio);
+            }
+        }
+
+        sceneWrapper.addEventListener('mousemove', (e) => {
+            const rect = sceneWrapper.getBoundingClientRect();
+            pointerX = (e.clientX - rect.left) / rect.width;
+            pointerY = (e.clientY - rect.top) / rect.height;
+        });
+
+        sceneWrapper.addEventListener('touchmove', (e) => {
+            if (e.touches.length > 0) {
+                const rect = sceneWrapper.getBoundingClientRect();
+                pointerX = (e.touches[0].clientX - rect.left) / rect.width;
+                pointerY = (e.touches[0].clientY - rect.top) / rect.height;
+            }
+        }, { passive: true });
+
+        let animTime = 0;
+
+        function drawStoryScene() {
+            animTime += 0.025;
+            if (isBookOpen && sceneWrapper.offsetWidth > 0) {
+                const w = sceneWrapper.offsetWidth;
+                const h = sceneWrapper.offsetHeight;
+                sCtx.clearRect(0, 0, w, h);
+
+                const ox = (pointerX - 0.5) * 35;
+                const oy = (pointerY - 0.5) * 25;
+
+                if (currentChapter === 0) {
+                    drawDarknessScene(sCtx, w, h, ox, oy, animTime);
+                } else if (currentChapter === 1) {
+                    drawStigmaScene(sCtx, w, h, ox, oy, animTime);
+                } else if (currentChapter === 2) {
+                    drawTransformationScene(sCtx, w, h, ox, oy, animTime);
+                } else if (currentChapter === 3) {
+                    drawSunriseScene(sCtx, w, h, ox, oy, animTime);
+                }
+            }
+            requestAnimationFrame(drawStoryScene);
+        }
+
+        function drawDarknessScene(ctx, w, h, ox, oy, t) {
+            const grad = ctx.createRadialGradient(w/2 + ox, h/2 + oy, 10, w/2, h/2, w*0.75);
+            grad.addColorStop(0, '#222226');
+            grad.addColorStop(1, '#070709');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, w, h);
+
+            // جدران خانقة وقضبان
+            ctx.save();
+            ctx.translate(ox * 0.4, oy * 0.4);
+            ctx.fillStyle = 'rgba(212, 175, 55, 0.06)';
+            ctx.fillRect(w*0.3, h*0.1, w*0.4, h*0.5);
+            ctx.strokeStyle = '#070709';
+            ctx.lineWidth = 6;
+            for (let i = 1; i <= 4; i++) {
+                let bx = w*0.3 + (w*0.4 / 5) * i;
+                ctx.beginPath();
+                ctx.moveTo(bx, h*0.1);
+                ctx.lineTo(bx, h*0.6);
+                ctx.stroke();
+            }
+            ctx.restore();
+
+            // ظل البطلة
+            ctx.save();
+            ctx.translate(ox * 1.1, oy * 0.8);
+            ctx.fillStyle = '#0d0d10';
+            ctx.beginPath();
+            ctx.arc(w*0.5, h*0.6, 17, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.moveTo(w*0.41, h*0.88);
+            ctx.quadraticCurveTo(w*0.45, h*0.65, w*0.53, h*0.65);
+            ctx.quadraticCurveTo(w*0.59, h*0.68, w*0.61, h*0.88);
+            ctx.fill();
+            ctx.restore();
+        }
+
+        function drawStigmaScene(ctx, w, h, ox, oy, t) {
+            const grad = ctx.createRadialGradient(w/2, h/2, 20, w/2, h/2, w*0.75);
+            grad.addColorStop(0, '#381018');
+            grad.addColorStop(1, '#080608');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, w, h);
+
+            // عيون نظرات المجتمع تتطاير
+            const gazes = [
+                {x: 0.2, y: 0.25}, {x: 0.8, y: 0.22},
+                {x: 0.15, y: 0.55}, {x: 0.85, y: 0.52},
+                {x: 0.28, y: 0.4}, {x: 0.72, y: 0.38}
+            ];
+            gazes.forEach((g, i) => {
+                let gx = w * g.x + ox * 0.5;
+                let gy = h * g.y + oy * 0.5;
+                ctx.fillStyle = 'rgba(244, 63, 94, 0.2)';
+                ctx.beginPath();
+                ctx.ellipse(gx, gy, 18, 8, 0, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            ctx.font = 'bold 15px Cairo';
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
+            ctx.fillText('مطلقة.. ناقصة!', w*0.25 - ox*0.4, h*0.45);
+            ctx.fillText('كلام الناس', w*0.6 - ox*0.4, h*0.65);
+
+            // وقفة صمود بداخل حماية
+            ctx.save();
+            ctx.translate(w*0.5 + ox, h*0.6 + oy*0.6);
+            ctx.strokeStyle = 'rgba(212, 175, 55, 0.65)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(0, -10, 46 + Math.sin(t*2)*3, 0, Math.PI * 2);
+            ctx.stroke();
+
+            ctx.fillStyle = '#fde047';
+            ctx.beginPath();
+            ctx.arc(0, -32, 11, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.moveTo(-16, 25);
+            ctx.lineTo(-10, -18);
+            ctx.lineTo(10, -18);
+            ctx.lineTo(16, 25);
+            ctx.closePath();
+            ctx.fill();
+            ctx.restore();
+        }
+
+        function drawTransformationScene(ctx, w, h, ox, oy, t) {
+            const grad = ctx.createLinearGradient(0, h, w, 0);
+            grad.addColorStop(0, '#0f172a');
+            grad.addColorStop(0.5, '#1e1b4b');
+            grad.addColorStop(1, '#78350f');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, w, h);
+
+            // كسر القيد
+            ctx.save();
+            ctx.translate(w*0.35 + ox, h*0.6 + oy);
+            ctx.strokeStyle = '#d4af37';
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.arc(-18, 0, 14, 0.4, Math.PI * 1.7);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.arc(18, -6, 14, Math.PI + 0.4, Math.PI * 2.7);
+            ctx.stroke();
+            ctx.restore();
+
+            // طيور تتحرر
+            for (let i = 0; i < 6; i++) {
+                let bx = w*0.35 + i * 35 + Math.sin(t + i) * 10 + ox * 0.6;
+                let by = h*0.55 - i * 25 - Math.cos(t * 1.5 + i) * 6 + oy * 0.6;
+                let flap = Math.sin(t * 4 + i) * 6;
+                
+                ctx.strokeStyle = '#fef08a';
+                ctx.lineWidth = 2.5;
+                ctx.beginPath();
+                ctx.moveTo(bx - 10, by - flap);
+                ctx.quadraticCurveTo(bx - 4, by - 5, bx, by);
+                ctx.quadraticCurveTo(bx + 4, by - 5, bx + 10, by - flap);
+                ctx.stroke();
+            }
+        }
+
+        function drawSunriseScene(ctx, w, h, ox, oy, t) {
+            const grad = ctx.createRadialGradient(w*0.5 + ox*0.4, h*0.4 + oy*0.4, 15, w*0.5, h*0.5, w*0.8);
+            grad.addColorStop(0, '#fef08a');
+            grad.addColorStop(0.4, '#b45309');
+            grad.addColorStop(1, '#110d0a');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, w, h);
+
+            // شمس الاكتمال المشرقة
+            ctx.save();
+            ctx.translate(w*0.5 + ox*0.6, h*0.48 + oy*0.6);
+            ctx.strokeStyle = '#fffbeb';
+            ctx.lineWidth = 4;
+            ctx.shadowColor = '#f59e0b';
+            ctx.shadowBlur = 25;
+            ctx.beginPath();
+            ctx.arc(0, 0, 65, 0, Math.PI * 2);
+            ctx.stroke();
+
+            for (let i = 0; i < 12; i++) {
+                let angle = (i * Math.PI / 6) + t * 0.2;
+                ctx.beginPath();
+                ctx.moveTo(Math.cos(angle) * 72, Math.sin(angle) * 72);
+                ctx.lineTo(Math.cos(angle) * 88, Math.sin(angle) * 88);
+                ctx.strokeStyle = 'rgba(254, 243, 199, 0.7)';
+                ctx.lineWidth = 2.5;
+                ctx.stroke();
+            }
+            ctx.restore();
+
+            // وقفة شموخ
+            ctx.save();
+            ctx.translate(w*0.5 + ox, h*0.55 + oy*0.8);
+            ctx.fillStyle = '#110d0a';
+            ctx.beginPath();
+            ctx.arc(0, -34, 12, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.moveTo(-20, 32);
+            ctx.lineTo(-11, -18);
+            ctx.lineTo(11, -18);
+            ctx.lineTo(20, 32);
+            ctx.closePath();
+            ctx.fill();
+            ctx.restore();
+        }
+
+        // جزيئات الخلفية الكلية
+        const ambientCanvas = document.getElementById('ambient-canvas');
+        const aCtx = ambientCanvas.getContext('2d');
+        let particles = [];
+
+        function initAmbientParticles() {
+            ambientCanvas.width = window.innerWidth;
+            ambientCanvas.height = window.innerHeight;
+            particles = [];
+            let count = Math.min(60, Math.floor(window.innerWidth / 25));
+            for (let i = 0; i < count; i++) {
+                particles.push({
+                    x: Math.random() * ambientCanvas.width,
+                    y: Math.random() * ambientCanvas.height,
+                    r: Math.random() * 2.5 + 0.5,
+                    vx: (Math.random() - 0.5) * 0.4,
+                    vy: -Math.random() * 0.5 - 0.1,
+                    alpha: Math.random() * 0.55 + 0.15
+                });
+            }
+        }
+
+        function animateAmbient() {
+            aCtx.clearRect(0, 0, ambientCanvas.width, ambientCanvas.height);
+            particles.forEach(p => {
+                p.x += p.vx;
+                p.y += p.vy;
+                if (p.y < 0) p.y = ambientCanvas.height;
+                if (p.x < 0) p.x = ambientCanvas.width;
+                if (p.x > ambientCanvas.width) p.x = 0;
+
+                aCtx.beginPath();
+                aCtx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                aCtx.fillStyle = `rgba(212, 175, 55, ${p.alpha})`;
+                aCtx.fill();
+            });
+            requestAnimationFrame(animateAmbient);
+        }
+
+        window.addEventListener('resize', () => {
+            initAmbientParticles();
+            resizeSceneCanvas();
+        });
+
+        window.onload = function() {
+            initAmbientParticles();
+            animateAmbient();
+            drawStoryScene();
+        };
+    </script>
+</body>
+</html>
